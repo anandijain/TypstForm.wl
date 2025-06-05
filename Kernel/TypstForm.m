@@ -6,7 +6,7 @@ BeginPackage["TypstForm`"]
 MakeTypstString::usage =
   "MakeTypstString[expr] returns a Typst-compatible string for expr.";
 
-Begin["`Private`"]    (* ← note the backticks here *)
+Begin["`Private`"]
 
 ClearAll[MakeTypstString];
 
@@ -22,10 +22,9 @@ MakeTypstString[s_Symbol] /; StringLength[ToString[s]] == 1 := Module[
   ]
 ];
 MakeTypstString[s_Symbol] := SymbolName[s];
+
 MakeTypstString[Exp[x_]] := "e^(" <> MakeTypstString[x] <> ")";
-MakeTypstString[p_Power] /; p[[1]] === E := Module[{ex = p[[2]]},
-  "e^(" <> MakeTypstString[ex] <> ")"
-];
+
 unaryMap = {
   Sin -> "sin",
   Cos -> "cos",
@@ -39,17 +38,28 @@ Scan[
   Function[{rule},
     Module[{matHead = rule[[1]], typstName = rule[[2]]},
       If[matHead =!= Exp,
-        MakeTypstString[matHead[x_]] :=
-          typstName <> "(" <> MakeTypstString[x] <> ")"
+        MakeTypstString[matHead[x_]] := typstName <> "(" <> MakeTypstString[x] <> ")"
       ]
     ]
   ],
   unaryMap
 ];
-MakeTypstString[p_Power] := Module[{b, e},
+
+MakeTypstString[p_Power] := Module[{b, e, sb, se},
   {b, e} = List @@ p;
-  "(" <> MakeTypstString[b] <> ") ^ " <> MakeTypstString[e]
-]
+  se = MakeTypstString[e];
+  sb = MakeTypstString[b];
+  sb = If[
+    MatchQ[b, _Plus | _Times | _Divide | _Power],
+    "(" <> sb <> ")",
+    sb
+  ];
+  If[b === E,
+    "e^(" <> se <> ")",
+    sb <> " ^ " <> se
+  ]
+];
+
 MakeTypstString[t_Times] :=
   StringRiffle[MakeTypstString /@ List @@ t, " * "];
 MakeTypstString[a_Plus] :=
