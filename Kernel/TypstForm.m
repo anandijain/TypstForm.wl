@@ -46,10 +46,10 @@ Scan[
   ],
   unaryMap
 ];
-MakeTypstString[p_Power] := Module[{base, expo},
-  {base, expo} = List @@ p;
-  MakeTypstString[base] <> " ^ " <> MakeTypstString[expo]
-];
+MakeTypstString[p_Power] := Module[{b, e},
+  {b, e} = List @@ p;
+  "(" <> MakeTypstString[b] <> ") ^ " <> MakeTypstString[e]
+]
 MakeTypstString[t_Times] :=
   StringRiffle[MakeTypstString /@ List @@ t, " * "];
 MakeTypstString[a_Plus] :=

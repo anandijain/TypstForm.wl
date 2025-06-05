@@ -3,7 +3,7 @@
 (* Make sure our package is loaded *)
 Needs["TypstForm`"];
 
-(* List of tests *)
+(* List of tests, updated to match Wolfram’s canonical ordering *)
 tests = {
   VerificationTest[
     MakeTypstString[42],
@@ -57,14 +57,14 @@ tests = {
   ],
   VerificationTest[
     MakeTypstString[Divide[x^2 + 1, 2 y - 1]],
-    "(x ^ 2 + 1)/(2 * y - 1)",
+    "(1 + x ^ 2)/(-1 + 2 * y)",
     TestID -> "Divide[…,…]"
   ],
   VerificationTest[
     MakeTypstString[
       (x^2 + 3 x)/(2 y - 1) + Sqrt[Sin[\[Theta]]] + E^(3 + \[Alpha])
     ],
-    "(x ^ 2 + 3 * x)/(2 * y - 1) + sqrt(sin(theta)) + e^(3 + alpha)",
+    "e^(3 + alpha) + (3 * x + x ^ 2)/(-1 + 2 * y) + sqrt(sin(theta))",
     TestID -> "Combined example"
   ],
   VerificationTest[
