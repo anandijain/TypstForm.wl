@@ -72,6 +72,47 @@ tests = {
     "CustomHead[2, 5]",
     TestID -> "Fallback"
   ]
+  VerificationTest[
+  MakeTypstString[{1, 2}],
+  "vec(1,2)",
+  TestID -> "Vec of two numbers"
+];
+
+VerificationTest[
+  MakeTypstString[{{a, b}, {c, d}}],
+  "mat(a,b;c,d)",
+  TestID -> "Mat of 2×2 symbols"
+];
+VerificationTest[
+  MakeTypstString[{x^2, Sin[\[Theta]]}],
+  "vec(x ^ 2,sin(theta))",
+  TestID -> "Vec with expressions"
+];
+
+VerificationTest[
+  MakeTypstString[{{1, x + y}, {Sin[\[Alpha]], E^x}}],
+  "mat(1,x + y;sin(alpha),e^(x))",
+  TestID -> "Mat with mixed elements"
+];
+VerificationTest[
+  MakeTypstString[x'[t]],
+  "dv(x,t)",
+  TestID -> "First‐derivative of x"
+];
+
+VerificationTest[
+  MakeTypstString[Derivative[2][y][t]],
+  "dv(y,t,deg:2)",
+  TestID -> "Second‐derivative of y"
+];
+
+VerificationTest[
+  MakeTypstString[{x'[t], Derivative[3][a][s]}],
+  "vec(dv(x,t),dv(a,s,deg:3))",
+  TestID -> "Vec of 1st and 3rd derivatives"
+];
+
+
 };
 
 (* Run them and generate a report *)

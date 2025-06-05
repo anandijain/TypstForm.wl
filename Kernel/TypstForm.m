@@ -68,5 +68,25 @@ MakeTypstString[Divide[a_, b_]] :=
   "(" <> MakeTypstString[a] <> ")/(" <> MakeTypstString[b] <> ")";
 MakeTypstString[other_] := ToString[InputForm[other]];
 
+MakeTypstString[list_List] /; AllTrue[list, (Not[ListQ[#]] &)] := Module[{elems},
+  elems = MakeTypstString /@ list;
+  "vec(" <> StringRiffle[elems, ","] <> ")"
+];
+
+MakeTypstString[list_List] /; AllTrue[list, ListQ] := Module[{rows, rowStrs},
+  rows = (MakeTypstString /@ #) & /@ list;
+  rowStrs = StringRiffle[#, ","] & /@ rows;
+  "mat(" <> StringRiffle[rowStrs, ";"] <> ")"
+];
+
+(* 1st‐derivative: x'[t] → dv(x,t) *)
+MakeTypstString[Derivative[1][f_][t_]] :=
+  "dv(" <> MakeTypstString[f] <> "," <> MakeTypstString[t] <> ")";
+
+(* n‐th derivative (n>1): Derivative[n][f][t] → dv(f,t,deg:n) *)
+MakeTypstString[Derivative[n_?Positive][f_][t_]] :=
+  "dv(" <> MakeTypstString[f] <> "," <> MakeTypstString[t] <>
+   ",deg:" <> ToString[n] <> ")";
+
 End[]   (* closes `TypstForm`Private` *)
 EndPackage[]
